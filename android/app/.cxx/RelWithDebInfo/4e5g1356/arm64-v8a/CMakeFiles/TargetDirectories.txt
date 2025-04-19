@@ -1,0 +1,2 @@
+/home/lav/dev/Lvl-Up/android/app/.cxx/RelWithDebInfo/4e5g1356/arm64-v8a/CMakeFiles/edit_cache.dir
+/home/lav/dev/Lvl-Up/android/app/.cxx/RelWithDebInfo/4e5g1356/arm64-v8a/CMakeFiles/rebuild_cache.dir
