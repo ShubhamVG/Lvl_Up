@@ -16,7 +16,7 @@ final class HomeScreen extends Screen {
   State<StatefulWidget> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late final Profile profile;
   late final ConfettiController confettiController;
 
@@ -42,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    TabController tabController = TabController(length: 3, vsync: this);
     const space = SizedBox(height: 20.0);
 
     final currentTime = DateTime.now();
@@ -76,10 +77,55 @@ class _HomeScreenState extends State<HomeScreen> {
       weeklyTSubtitle = '${weeklyTEndTime.inMinutes} minutes left';
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: SingleChildScrollView(
-        child: Column(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Text(
+            "Hello Mary",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Text(
+            "You have 4/7 tasks left to complete",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 5,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: TabBar(
+                controller: tabController,
+                // indicator: BoxDecoration(
+                //   color: Colors.orange,
+                //   borderRadius: BorderRadius.circular(12),
+                // ),
+                labelColor: const Color.fromARGB(255, 0, 0, 0),
+                unselectedLabelColor: const Color.fromARGB(129, 0, 0, 0),
+                tabs: [
+                  Tab(child: Text("Daily Tasks")),
+                  Tab(child: Text("Weekly Tasks")),
+                  Tab(child: Text("Side Quests")),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+            child: TabBarView(
+          controller: tabController,
           children: [
             TaskGroup(
               'Daily Tasks',
@@ -93,7 +139,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 confettiController.play();
               }),
             ),
-            space,
             TaskGroup(
               'Weekly Tasks',
               subtitle: '($weeklyTSubtitle)',
@@ -106,7 +151,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 confettiController.play();
               }),
             ),
-            space,
             TaskGroup(
               'Side Quests',
               tasks: profile.sideQuests,
@@ -121,16 +165,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 confettiController.play();
               }),
             ),
-            ConfettiWidget(
-              confettiController: confettiController,
-              blastDirection: -pi / 2.0,
-              emissionFrequency: 0.4,
-              blastDirectionality: BlastDirectionality.explosive,
-              numberOfParticles: 20,
-            ),
           ],
+        )),
+        ConfettiWidget(
+          confettiController: confettiController,
+          blastDirection: -pi / 2.0,
+          emissionFrequency: 0.4,
+          blastDirectionality: BlastDirectionality.explosive,
+          numberOfParticles: 20,
         ),
-      ),
+      ],
     );
   }
 }
