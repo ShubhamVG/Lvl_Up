@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../core/internal_types.dart';
 import '../core/modals.dart';
+import 'stat_count.dart';
 
 final class TaskContainer extends StatelessWidget {
   const TaskContainer(this.task, {super.key, required this.onDone});
@@ -29,10 +30,10 @@ final class TaskContainer extends StatelessWidget {
                 children: [
                   Text(task.label),
                   if (task is Task && (task as Task).stats.isNotEmpty)
-                    Text(
-                      (task as Task).stats.toString(),
-                      style: const TextStyle(fontSize: 10.0),
-                    )
+                    StatCount(
+                      statMap: (task as Task).stats,
+                      color: Colors.green.shade100,
+                    ),
                 ],
               ),
             ),

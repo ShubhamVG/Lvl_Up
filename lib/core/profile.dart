@@ -45,6 +45,20 @@ final class Profile {
   List<Task> dailyTaskPool;
   List<Task> weeklyTaskPool;
 
+  int get level {
+    final currStats = stats.entries
+        .where((stat) => !stat.key.startsWith('prevWeek'))
+        .map((stat) => stat.value)
+        .toList(growable: false);
+
+    final sum = currStats.reduce((x, y) => x + y);
+    final avg = sum / currStats.length;
+    final avgRounded10 = avg - (avg ~/ 10);
+    final level = (avgRounded10.toInt() - 30);
+
+    return level;
+  }
+
   static Future<Profile> fromDb(DbHandler db) async {
     final List<Task> dailyTasks = await db.fetchAs<Task>(
       DbTable.dailyTasks,

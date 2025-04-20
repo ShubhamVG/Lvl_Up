@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "in.brainiacs" "\0"
+            VALUE "CompanyName", "in.brainiacs.lvl_up" "\0"
             VALUE "FileDescription", "lvl_up" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "lvl_up" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 in.brainiacs. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 in.brainiacs.lvl_up. All rights reserved." "\0"
             VALUE "OriginalFilename", "lvl_up.exe" "\0"
             VALUE "ProductName", "lvl_up" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

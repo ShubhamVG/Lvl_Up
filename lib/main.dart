@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'components/botm_nav_bar.dart';
 import 'core/db_handler.dart';
 import 'core/profile.dart';
 import 'screens/home_screen.dart';
@@ -12,6 +11,8 @@ import 'screens/pool_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/screen.dart';
 import 'screens/settings_screen.dart';
+
+import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
 void main() async {
   // NOTE: Must always stay at top for other things to work.
@@ -33,7 +34,6 @@ void main() async {
   try {
     profile = await Profile.fromDb(db);
   } catch (e) {
-    // TODO: add error screen thing (Anuj)
     runApp(MaterialApp(
       title: 'Lvl Up',
       debugShowCheckedModeBanner: kDebugMode,
@@ -63,7 +63,6 @@ final class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late int pageIdx;
   late final List<Screen> pages;
-  late final PageController pageController;
   late final Profile profile;
 
   @override
@@ -72,12 +71,10 @@ class _MyAppState extends State<MyApp> {
     pageIdx = 0;
     pages = [
       HomeScreen(profile),
-      InventoryScreen(profile),
       PoolScreen(profile),
+      InventoryScreen(profile),
       SettingsScreen(profile),
     ];
-    pageController = PageController();
-
     super.initState();
   }
 
@@ -86,45 +83,66 @@ class _MyAppState extends State<MyApp> {
     final page = pages[pageIdx];
 
     return Scaffold(
-      drawer: Drawer(child: SettingsScreen(profile)),
-      appBar: AppBar(
-        title: Text(
-          page.title,
-          style: GoogleFonts.monda(fontWeight: FontWeight.bold),
+        drawer: Drawer(child: SettingsScreen(profile)),
+        appBar: AppBar(
+          title: Text(
+            page.title,
+            style: GoogleFonts.monda(fontWeight: FontWeight.bold),
+          ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(profile),
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.person_outline_rounded,
+                color: Colors.purple.shade500,
+              ),
+            )
+          ],
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfileScreen(profile),
-                ),
-              );
-            },
-            icon: Icon(
-              Icons.person_outline_rounded,
-              color: Colors.purple.shade500,
+        body: pages[pageIdx],
+        bottomNavigationBar: StylishBottomBar(
+          option: DotBarOptions(
+            dotStyle: DotStyle.tile,
+            gradient: const LinearGradient(
+              colors: [
+                Colors.deepPurple,
+                Colors.pink,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          )
-        ],
-      ),
-      body: PageView(
-        controller: pageController,
-        physics: NeverScrollableScrollPhysics(),
-        children: pages,
-      ),
-      bottomNavigationBar: BotmNavBar(
-        selectedIdx: pageIdx,
-        onIdxChange: (int idx) {
-          setState(() => pageIdx = idx);
-          pageController.animateToPage(
-            idx,
-            duration: const Duration(milliseconds: 320),
-            curve: Curves.linear,
-          );
-        },
-      ),
-    );
+          ),
+          items: [
+            BottomBarItem(
+              icon: const Icon(Icons.home_outlined),
+              title: const Text('Home'),
+              backgroundColor: Colors.black,
+              selectedIcon: const Icon(Icons.home_filled),
+            ),
+            BottomBarItem(
+              icon: const Icon(Icons.add_circle),
+              title: const Text('Add Tasks'),
+              backgroundColor: Colors.orange,
+            ),
+            BottomBarItem(
+              icon: const Icon(Icons.inventory),
+              title: const Text('Rewards'),
+              backgroundColor: const Color.fromARGB(255, 6, 194, 128),
+            ),
+          ],
+          currentIndex: pageIdx,
+          onTap: (index) {
+            setState(() {
+              pageIdx = index;
+            });
+          },
+        ));
   }
 }

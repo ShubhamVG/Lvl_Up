@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lvl_up/core/modals.dart';
 
+import 'stat_count.dart';
+
 final class BulletCheckTile extends StatelessWidget {
   const BulletCheckTile({
     super.key,
@@ -84,10 +86,11 @@ final class BulletEditTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(label),
-                    Text(
-                      stats?.toString() ?? '',
-                      style: const TextStyle(fontStyle: FontStyle.italic),
-                    )
+                    if (stats != null)
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: StatCount(statMap: stats as Map<String, int>),
+                      ),
                   ],
                 ),
               ),
@@ -160,10 +163,11 @@ final class _EditingBulletTileState extends State<EditingBulletTile> {
                       focusNode: _focusNode,
                       onTapOutside: (_) => _focusNode.unfocus(),
                     ),
-                    Text(
-                      stats,
-                      style: const TextStyle(fontStyle: FontStyle.italic),
-                    )
+                    if (stats != '')
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: StatCount(statMap: widget.item.stats),
+                      ),
                   ],
                 ),
               ),

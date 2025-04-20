@@ -160,30 +160,43 @@ class _CurrentRewardsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: add text to say something like "rewards will appear here" once
-    // collected in a card instead of showing big empty space
-
-    return LayoutBuilder(builder: (context, constraints) {
-      const numberOfCards = 4;
-      final width = constraints.maxWidth;
-      const cardPadding = 10.0;
-      final cardSize = (width - 3.0 * cardPadding) / numberOfCards;
-      final height = 2.2 * cardSize + 2.0 * cardPadding;
-
-      return SizedBox(
-        height: height,
-        child: GridView(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: numberOfCards,
-            crossAxisSpacing: cardPadding,
-            mainAxisSpacing: cardPadding,
-          ),
-          children: profile.currentRewards.map((reward) {
-            return _RewardCard(reward, onRewardUse, profile);
-          }).toList(),
-        ),
+    if (profile.currentRewards.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: const Text("Rewards will appear here when you get them :)"),
       );
-    });
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(
+          color: Colors.black26,
+          width: 2.0,
+        ),
+      ),
+      child: LayoutBuilder(builder: (context, constraints) {
+        const numberOfCards = 4;
+        final width = constraints.maxWidth;
+        const cardPadding = 10.0;
+        final cardSize = (width - 3.0 * cardPadding) / numberOfCards;
+        final height = 2.2 * cardSize + 2.0 * cardPadding;
+
+        return SizedBox(
+          height: height,
+          child: GridView(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: numberOfCards,
+              crossAxisSpacing: cardPadding,
+              mainAxisSpacing: cardPadding,
+            ),
+            children: profile.currentRewards.map((reward) {
+              return _RewardCard(reward, onRewardUse, profile);
+            }).toList(),
+          ),
+        );
+      }),
+    );
   }
 }
 

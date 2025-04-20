@@ -1,2 +1,0 @@
-/home/lav/dev/Lvl-Up/android/app/.cxx/Debug/144p2n3r/x86_64/CMakeFiles/edit_cache.dir
-/home/lav/dev/Lvl-Up/android/app/.cxx/Debug/144p2n3r/x86_64/CMakeFiles/rebuild_cache.dir

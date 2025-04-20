@@ -142,7 +142,7 @@ class _PoolPage extends StatefulWidget {
   final PoolType poolType;
   final Profile profile;
 
-  void deleteFromPool(final int id) async {
+  Future<void> deleteFromPool(final int id) async {
     switch (poolType) {
       case PoolType.daily:
         await profile.deleteFromDailyTaskPool(id);
@@ -159,7 +159,7 @@ class _PoolPage extends StatefulWidget {
     }
   }
 
-  void addToPool(final dynamic item) async {
+  Future<void> addToPool(final dynamic item) async {
     switch (poolType) {
       case PoolType.daily:
         await profile.addToDailyTaskPool(item as Task);
@@ -176,7 +176,7 @@ class _PoolPage extends StatefulWidget {
     }
   }
 
-  void editPoolItem(final dynamic item) async {
+  Future<void> editPoolItem(final dynamic item) async {
     switch (poolType) {
       case PoolType.daily:
         await profile.updateDailyTaskPoolItem(item as Task);
@@ -300,9 +300,12 @@ class _PoolPageState extends State<_PoolPage> {
                           showDialog<String>(
                             context: context,
                             builder: (ctx) => Dialog(
-                              backgroundColor: Colors.grey,
+                              backgroundColor: Colors.grey.shade200,
                               child: Padding(
-                                padding: const EdgeInsets.all(10.0),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0,
+                                  vertical: 10.0,
+                                ),
                                 child: Text(
                                   'Editing progress...  Save them first.',
                                   style: const TextStyle(color: Colors.white),
@@ -318,8 +321,11 @@ class _PoolPageState extends State<_PoolPage> {
                       },
                       onDeleteClicked: () {
                         // TODO: add a yes/no option
-                        widget.deleteFromPool(e.id);
-                        setState(() {/* Item from pool got removed */});
+                        widget.deleteFromPool(e.id).then((_) {
+                          if (mounted) {
+                            setState(() {/* Item from pool got removed */});
+                          }
+                        });
                       },
                     ),
                   );

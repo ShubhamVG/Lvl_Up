@@ -3,9 +3,8 @@ import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 
-import '../components/task_group.dart';
+import '../components/task_container.dart';
 import '../core/constants.dart';
-import '../core/modals.dart';
 import '../core/profile.dart';
 import 'screen.dart';
 
@@ -16,33 +15,36 @@ final class HomeScreen extends Screen {
   State<StatefulWidget> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  late int tabIdx;
+  late String randomQuote;
   late final Profile profile;
   late final ConfettiController confettiController;
+  late final TabController tabController;
 
   @override
   void initState() {
     super.initState();
+    randomQuote = _randomMotivationalQuote();
+    tabIdx = 0;
     profile = widget.profile;
     confettiController = ConfettiController(
       duration: const Duration(milliseconds: 200),
     );
-    _evaluateTasks();
+    tabController = TabController(length: 3, vsync: this);
+    profile.evaluateTaskCompletion();
   }
 
   @override
   void dispose() {
     super.dispose();
     confettiController.dispose();
-  }
-
-  void _evaluateTasks() async {
-    await profile.evaluateTaskCompletion();
+    tabController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    const space = SizedBox(height: 20.0);
+    final scrnSize = MediaQuery.sizeOf(context);
 
     final currentTime = DateTime.now();
     final dailyTEndTime =
@@ -52,85 +54,246 @@ class _HomeScreenState extends State<HomeScreen> {
         DateTime.fromMillisecondsSinceEpoch(profile.weeklyTaskEndTime)
             .difference(currentTime);
 
-    late final String dailyTSubtitle;
+    late final String dailyTEndTimeStr;
+    late final String dailyTEndTimeUnit;
 
     if (dailyTEndTime.inHours > 0) {
       final hours = dailyTEndTime.inHours;
       final minutes = (dailyTEndTime.inMinutes - hours * 60) ~/ 6;
-      dailyTSubtitle = '$hours.$minutes hours left';
+      dailyTEndTimeStr = '$hours.$minutes';
+      dailyTEndTimeUnit = 'hours';
     } else {
-      dailyTSubtitle = '${dailyTEndTime.inMinutes} minutes left';
+      dailyTEndTimeStr = '${dailyTEndTime.inMinutes}';
+      dailyTEndTimeUnit = 'minutes';
     }
 
-    late final String weeklyTSubtitle;
+    late final String weeklyTEndTimeStr;
+    late final String weeklyTEndTimeUnit;
 
     if (weeklyTEndTime.inDays > 0) {
       final days = weeklyTEndTime.inDays;
       final hours = (weeklyTEndTime.inHours - days * 24) ~/ 2.4;
-      weeklyTSubtitle = '$days.$hours days left';
+      weeklyTEndTimeStr = '$days.$hours';
+      weeklyTEndTimeUnit = 'days';
     } else if (weeklyTEndTime.inHours > 0) {
       final hours = weeklyTEndTime.inHours;
       final minutes = (weeklyTEndTime.inMinutes - hours * 60) ~/ 6;
-      weeklyTSubtitle = '$hours.$minutes hours left';
+      weeklyTEndTimeStr = '$hours.$minutes';
+      weeklyTEndTimeUnit = 'hours';
     } else {
-      weeklyTSubtitle = '${weeklyTEndTime.inMinutes} minutes left';
+      weeklyTEndTimeStr = '${weeklyTEndTime.inMinutes}';
+      weeklyTEndTimeUnit = 'minutes';
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            TaskGroup(
-              'Daily Tasks',
-              subtitle: '($dailyTSubtitle)',
-              tasks: profile.dailyTasks,
-              onDone: (rawTask) => setState(() {
-                final task = rawTask as Task;
-                if (task.isComplete) return;
-
-                profile.markTaskComplete(TaskType.daily, task);
-                confettiController.play();
-              }),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: scrnSize.width,
+            decoration: BoxDecoration(
+              // color: Colors.green,
+              image: DecorationImage(
+                fit: BoxFit.fitWidth,
+                image: AssetImage('assets/dew-leaf.png'),
+              ),
             ),
-            space,
-            TaskGroup(
-              'Weekly Tasks',
-              subtitle: '($weeklyTSubtitle)',
-              tasks: profile.weeklyTasks,
-              onDone: (rawTask) => setState(() {
-                final task = rawTask as Task;
-                if (task.isComplete) return;
-
-                profile.markTaskComplete(TaskType.weekly, task);
-                confettiController.play();
-              }),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                bottom: 10.0,
+                left: 5.0,
+                right: 5.0,
+              ),
+              child: Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0, top: 10.0),
+                      child: Text(
+                        "Hello there!",
+                        style: TextStyle(fontSize: 13, color: Colors.white),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15.0),
+                      child: Text(
+                        "Tasks completed:",
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Text(
+                        '4/7',
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Row(
+                        children: [
+                          Text("42°C ", style: TextStyle(color: Colors.white)),
+                          Icon(Icons.sunny, color: Colors.white),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 0.0),
+                              child: SizedBox(
+                                width: scrnSize.width * 0.7,
+                                child: Text(
+                                  randomQuote,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 5,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            space,
-            TaskGroup(
-              'Side Quests',
-              tasks: profile.sideQuests,
-              onDone: (rawTask) => setState(() {
-                final quest = rawTask as SideQuest;
-                if (quest.isComplete) return;
-
-                profile.markTaskComplete(
-                  TaskType.sideQuests,
-                  quest,
-                );
-                confettiController.play();
-              }),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: TabBar(
+              dividerHeight: 0.0,
+              controller: tabController,
+              labelColor: const Color.fromARGB(255, 0, 0, 0),
+              unselectedLabelColor: const Color.fromARGB(129, 0, 0, 0),
+              tabs: [
+                Tab(child: Text("Daily Tasks")),
+                Tab(child: Text("Weekly Tasks")),
+                Tab(child: Text("Side Quests")),
+              ],
             ),
-            ConfettiWidget(
+          ),
+          SizedBox(
+            height: 300,
+            child: TabBarView(
+              controller: tabController,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      for (final task in profile.dailyTasks)
+                        TaskContainer(
+                          task,
+                          onDone: () {
+                            profile.markTaskComplete(TaskType.daily, task);
+                            confettiController.play();
+                            setState(() {});
+                          },
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              dailyTEndTimeStr,
+                              style: TextStyle(
+                                color: Colors.orange,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(' $dailyTEndTimeUnit left'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: ListView(
+                    children: [
+                      for (final task in profile.weeklyTasks)
+                        TaskContainer(
+                          task,
+                          onDone: () {
+                            profile.markTaskComplete(TaskType.weekly, task);
+                            setState(() {});
+                          },
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              weeklyTEndTimeStr,
+                              style: TextStyle(
+                                color: Colors.orange,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(' $weeklyTEndTimeUnit left'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: ListView(
+                    children: [
+                      for (final quest in profile.sideQuests)
+                        TaskContainer(
+                          quest,
+                          onDone: () {
+                            profile.markTaskComplete(
+                              TaskType.sideQuests,
+                              quest,
+                            );
+                            confettiController.play();
+                            setState(() {});
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: ConfettiWidget(
               confettiController: confettiController,
               blastDirection: -pi / 2.0,
-              emissionFrequency: 0.4,
               blastDirectionality: BlastDirectionality.explosive,
-              numberOfParticles: 20,
+              numberOfParticles: 30,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+}
+
+String _randomMotivationalQuote() {
+  const quotes = <String>[
+    "Best day to finish your work!",
+    "You're 1 step closer to perfection!",
+    "The day couldn't be any better!",
+    "It's the perfect time!",
+    "Happiness is key!",
+    "Get ready with a cuppa' coffe",
+    "You look the best when you smile :)",
+    "You have made a great amount of progress!"
+  ];
+  final random = Random();
+  final index = random.nextInt(quotes.length);
+  return quotes[index];
 }
