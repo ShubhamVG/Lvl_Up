@@ -27,13 +27,57 @@ final class _SettingsScreenState extends State<SettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Utitilies',
-            style: TextStyle(fontWeight: FontWeight.w400, fontSize: 12.0),
+            'Settings',
+            style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20.0),
           ),
           Divider(),
-          _SettingButton('Share App', () {}),
-          _SettingButton('About Us & Mission', () {}),
-          _SettingButton('Terms of Service', () {}),
+          SafeArea(
+            child: Container(
+                child: Column(
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.share,
+                      size: 25.0,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    _SettingButton('Share App', () {}),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.notifications,
+                      size: 25.0,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    _SettingButton('Notification', () {}),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.person,
+                      size: 25.0,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    _SettingButton('Change Profile', () {}),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.bug_report,
+                      size: 25.0,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    _SettingButton('Report Bug', () {}),
+                  ],
+                ),
+              ],
+            )),
+          ),
         ],
       ),
     );
