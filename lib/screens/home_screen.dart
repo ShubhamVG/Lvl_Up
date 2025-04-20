@@ -94,6 +94,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
           ),
         ),
+        const SizedBox(height: 30.0),
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0),
+          child: Row(
+            children: [
+              Text("42°C "),
+              Icon(Icons.sunny),
+              const SizedBox(
+                width: 30,
+              ),
+              Flexible(
+                child: Text("Heatwave alert: caused by your ambition."),
+              )
+            ],
+          ),
+        ),
+        const SizedBox(height: 30.0),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Card(
@@ -131,13 +148,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               'Daily Tasks',
               subtitle: '($dailyTSubtitle)',
               tasks: profile.dailyTasks,
-              onDone: (rawTask) => setState(() {
-                final task = rawTask as Task;
-                if (task.isComplete) return;
+              onDone: (rawTask) => setState(
+                () {
+                  final task = rawTask as Task;
+                  if (task.isComplete) return;
 
-                profile.markTaskComplete(TaskType.daily, task);
-                confettiController.play();
-              }),
+                  profile.markTaskComplete(TaskType.daily, task);
+                  confettiController.play();
+                },
+              ),
             ),
             TaskGroup(
               'Weekly Tasks',
