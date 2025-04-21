@@ -22,13 +22,14 @@ Real-time Progress Tracking: Visualize your progress with dynamic charts and
 motivational summaries.
 
 
-📸 Screenshots
-![Home Screen](/gh-assets/home.png)  
+# 📸 Screenshots
+![Home Screen](/gh-assets/home.png) 
 ![Progress Screen](/gh-assets/profile.png)
 
 ## 🛠️ Installation
-You can directly download the apk from GitHub release. It should work for 
-most, if not all, android phones and architectures.
+You can directly download the apk from 
+[GitHub Release](https://github.com/ShubhamVG/Lvl_Up/releases/tag/v1.0). It 
+should work for most, if not all, android phones and architectures.
 
 
 If the above does not work for some reason, then you can **build from source** 
@@ -86,7 +87,7 @@ Anuj: [anujagarwal1704@gmail.com](mailto:anujagarwal1704@gmail.com)
 
 Abhinav Kumar Lal: [lalabhinav19@gmail.com](mailto:lalabhinav19@gmail.com)
 ## 🌐 Links
-[GitHub Release](https://example.com)
+[GitHub Release](https://github.com/ShubhamVG/Lvl_Up/releases/tag/v1.0)
 
 
 [YouTube Demo](https://example.com)
