@@ -23,8 +23,8 @@ motivational summaries.
 
 
 # 📸 Screenshots
-![Home Screen](/gh-assets/home.png) 
-![Progress Screen](/gh-assets/profile.png)
+![Home Screen](/gh-assets/home.webp) 
+![Progress Screen](/gh-assets/profile.webp)
 
 ## 🛠️ Installation
 You can directly download the apk from 
