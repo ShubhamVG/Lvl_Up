@@ -51,18 +51,27 @@ readme.so
 Ensure you have an emulator running or a device connected.
 
 ## 📁 Project Structure
-bash
-CopyEdit
+
 Lvl_Up/
+
 ├── android/            # Android-specific files
+
 ├── ios/                # iOS-specific files
+
 ├── lib/                # Main Dart codebase
+
 ├── assets/             # Images and other assets
+
 ├── web/                # Web-specific files
+
 ├── windows/            # Windows-specific files
+
 ├── macos/              # macOS-specific files
+
 ├── linux/              # Linux-specific files
+
 ├── pubspec.yaml        # Project metadata and dependencies
+
 └── README.md           # Project documentation
 
 
