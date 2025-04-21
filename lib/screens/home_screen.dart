@@ -8,6 +8,7 @@ import '../core/constants.dart';
 import '../core/modals/side_quests.dart';
 import '../core/profile.dart';
 import '../utils/audio.dart';
+import 'pomodoro_screen.dart';
 import 'screen.dart';
 
 final class HomeScreen extends Screen {
@@ -92,247 +93,286 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       weeklyTEndTimeUnit = 'minutes';
     }
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: scrnSize.width,
-            decoration: BoxDecoration(
-              // color: Colors.green,
-              image: DecorationImage(
-                fit: BoxFit.fitWidth,
-                image: AssetImage('assets/dew-leaf.png'),
+    final int completedTask =
+        profile.dailyTasks.where((t) => t.isComplete).length +
+            profile.weeklyTasks.where((t) => t.isComplete).length;
+
+    final int totalTask = profile.dailyTasks.length +
+        profile.weeklyTasks.length +
+        profile.sideQuests.length;
+
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: scrnSize.width,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.fitWidth,
+                    image: AssetImage('assets/dew-leaf.png'),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 10.0,
+                    left: 5.0,
+                    right: 5.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 10.0),
+                        child: Text(
+                          "Hello there!",
+                          style: TextStyle(fontSize: 13, color: Colors.white),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: Text(
+                          "Tasks completed:",
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          '$completedTask/$totalTask',
+                          style: TextStyle(
+                            fontSize: 40,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          randomQuote,
+                          maxLines: 5,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                bottom: 10.0,
-                left: 5.0,
-                right: 5.0,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: TabBar(
+                  dividerHeight: 0.0,
+                  controller: tabController,
+                  labelColor: const Color.fromARGB(255, 0, 0, 0),
+                  unselectedLabelColor: const Color.fromARGB(129, 0, 0, 0),
+                  tabs: [
+                    Tab(child: Text("Daily Tasks")),
+                    Tab(child: Text("Weekly Tasks")),
+                    Tab(child: Text("Side Quests")),
+                  ],
+                ),
               ),
-              child: Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(
+                height: 300,
+                child: TabBarView(
+                  controller: tabController,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 10.0),
-                      child: Text(
-                        "Hello there!",
-                        style: TextStyle(fontSize: 13, color: Colors.white),
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: [
+                          for (final task in profile.dailyTasks)
+                            TaskContainer(
+                              task,
+                              onDone: () {
+                                profile
+                                    .markTaskComplete(TaskType.daily, task)
+                                    .then((_) {
+                                  if (mounted) {
+                                    setState(() {});
+                                    confettiController.play();
+                                    playJingle();
+                                  }
+                                });
+                              },
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  dailyTEndTimeStr,
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(' $dailyTEndTimeUnit left'),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 15.0),
-                      child: Text(
-                        "Tasks completed:",
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.white,
-                        ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: ListView(
+                        children: [
+                          for (final task in profile.weeklyTasks)
+                            TaskContainer(
+                              task,
+                              onDone: () {
+                                profile
+                                    .markTaskComplete(TaskType.weekly, task)
+                                    .then((_) {
+                                  if (mounted) {
+                                    setState(() {});
+                                    confettiController.play();
+                                    playJingle();
+                                  }
+                                });
+                              },
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  weeklyTEndTimeStr,
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(' $weeklyTEndTimeUnit left'),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Center(
-                      child: Text(
-                        '4/7',
-                        style: TextStyle(
-                          fontSize: 40,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: Text(
-                        randomQuote,
-                        maxLines: 5,
-                        style: TextStyle(color: Colors.white),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: ListView(
+                        children: [
+                          for (final quest in profile.sideQuests)
+                            TaskContainer(
+                              quest,
+                              onDone: () {
+                                profile
+                                    .markTaskComplete(
+                                        TaskType.sideQuests, quest)
+                                    .then((_) {
+                                  if (mounted) {
+                                    setState(() {});
+                                    confettiController.play();
+                                    playJingle();
+                                  }
+                                });
+                              },
+                            ),
+                          if (isQuestBeingAdded)
+                            Card(
+                              elevation: 5.0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 10.0,
+                                  right: 10.0,
+                                  bottom: 5.0,
+                                ),
+                                child: TextField(
+                                  controller: textController,
+                                ),
+                              ),
+                            ),
+                          const SizedBox(height: 10.0),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green.shade100,
+                              elevation: 5.0,
+                            ),
+                            onPressed: () {
+                              if (isQuestBeingAdded) {
+                                final quest = SideQuest(
+                                  id: DateTime.now().second,
+                                  label: textController.text,
+                                );
+                                profile.addSideQuest(quest).then((_) {
+                                  if (mounted) {
+                                    setState(() {
+                                      textController.clear();
+                                      isQuestBeingAdded = false;
+                                    });
+                                  }
+                                });
+                              }
+
+                              setState(() {
+                                isQuestBeingAdded = true;
+                              });
+                            },
+                            child: const Text(
+                              "Add Side Quest",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: TabBar(
-              dividerHeight: 0.0,
-              controller: tabController,
-              labelColor: const Color.fromARGB(255, 0, 0, 0),
-              unselectedLabelColor: const Color.fromARGB(129, 0, 0, 0),
-              tabs: [
-                Tab(child: Text("Daily Tasks")),
-                Tab(child: Text("Weekly Tasks")),
-                Tab(child: Text("Side Quests")),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 300,
-            child: TabBarView(
-              controller: tabController,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      for (final task in profile.dailyTasks)
-                        TaskContainer(
-                          task,
-                          onDone: () {
-                            profile
-                                .markTaskComplete(TaskType.daily, task)
-                                .then((_) {
-                              if (mounted) {
-                                setState(() {});
-                                confettiController.play();
-                                playJingle();
-                              }
-                            });
-                          },
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              dailyTEndTimeStr,
-                              style: TextStyle(
-                                color: Colors.orange,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(' $dailyTEndTimeUnit left'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+              Align(
+                alignment: Alignment.center,
+                child: ConfettiWidget(
+                  confettiController: confettiController,
+                  blastDirection: -pi / 2.0,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  numberOfParticles: 30,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: ListView(
-                    children: [
-                      for (final task in profile.weeklyTasks)
-                        TaskContainer(
-                          task,
-                          onDone: () {
-                            profile
-                                .markTaskComplete(TaskType.weekly, task)
-                                .then((_) {
-                              if (mounted) {
-                                setState(() {});
-                                confettiController.play();
-                                playJingle();
-                              }
-                            });
-                          },
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              weeklyTEndTimeStr,
-                              style: TextStyle(
-                                color: Colors.orange,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(' $weeklyTEndTimeUnit left'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: ListView(
-                    children: [
-                      for (final quest in profile.sideQuests)
-                        TaskContainer(
-                          quest,
-                          onDone: () {
-                            profile
-                                .markTaskComplete(TaskType.sideQuests, quest)
-                                .then((_) {
-                              if (mounted) {
-                                setState(() {});
-                                confettiController.play();
-                                playJingle();
-                              }
-                            });
-                          },
-                        ),
-                      if (isQuestBeingAdded)
-                        Card(
-                          elevation: 5.0,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 10.0,
-                              right: 10.0,
-                              bottom: 5.0,
-                            ),
-                            child: TextField(
-                              controller: textController,
-                            ),
-                          ),
-                        ),
-                      const SizedBox(height: 10.0),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade100,
-                          elevation: 5.0,
-                        ),
-                        onPressed: () {
-                          if (isQuestBeingAdded) {
-                            final quest = SideQuest(
-                              id: DateTime.now().second,
-                              label: textController.text,
-                            );
-                            profile.addSideQuest(quest).then((_) {
-                              if (mounted) {
-                                setState(() {
-                                  textController.clear();
-                                  isQuestBeingAdded = false;
-                                });
-                              }
-                            });
-                          }
-
-                          setState(() {
-                            isQuestBeingAdded = true;
-                          });
-                        },
-                        child: const Text(
-                          "Add Side Quest",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
+              const SizedBox(height: 20.0),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0, right: 10.0),
+          child: Align(
+            alignment: Alignment.bottomRight,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PomodoroScreen()),
+                );
+              },
+              backgroundColor: Colors.white,
+              icon: const Icon(
+                Icons.timer_outlined,
+                size: 28,
+                color: Colors.black,
+              ),
+              label: const Text(
+                'Pomodoro',
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16),
+              ),
             ),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: ConfettiWidget(
-              confettiController: confettiController,
-              blastDirection: -pi / 2.0,
-              blastDirectionality: BlastDirectionality.explosive,
-              numberOfParticles: 30,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

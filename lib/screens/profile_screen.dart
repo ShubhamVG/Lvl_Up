@@ -26,7 +26,7 @@ final class ProfileScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: _Profile(level: profile.currentLevel)),
+              Center(child: _Profile(profile: profile)),
               const SizedBox(height: 20.0),
               Text(
                 'LEVEL ${profile.currentLevel}',
@@ -51,9 +51,9 @@ final class ProfileScreen extends StatelessWidget {
 }
 
 class _Profile extends StatelessWidget {
-  const _Profile({required this.level});
+  const _Profile({required this.profile});
 
-  final int level;
+  final Profile profile;
 
   @override
   Widget build(BuildContext context) {
@@ -66,16 +66,30 @@ class _Profile extends StatelessWidget {
         ),
         SizedBox(height: 10.0),
         const Text(
-          'Insert Name Here', // TODO
+          "You're doing great!",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20.0,
           ),
         ),
         SizedBox(height: 10.0),
-        XpBar(percentage: 0.7, level: level),
+        XpBar(percentage: _calcPercentage(), level: profile.level),
       ],
     );
+  }
+
+  double _calcPercentage() {
+    final currStats = profile.stats.entries
+        .where((stat) => !stat.key.startsWith('prevWeek'))
+        .map((stat) => stat.value)
+        .toList(growable: false);
+
+    final sum = currStats.reduce((x, y) => x + y);
+    final avg = sum / currStats.length;
+    final lastDigit = avg.toInt() % 10;
+    final percentage = lastDigit / 10.0;
+
+    return percentage;
   }
 }
 
@@ -92,22 +106,23 @@ class _Progress extends StatelessWidget {
         StackedColumnSeries(
           animationDuration: 700,
           dataSource: stats.entries
-              .where((e) => e.key.startsWith('prev') == false)
+              .where((e) => e.key.startsWith('prev'))
               .toList(growable: false),
-          xValueMapper: (x, _) => x.key,
+          xValueMapper: (x, _) => (x.key as String).substring(8).toLowerCase(),
           yValueMapper: (x, _) => x.value,
           legendItemText: 'Last Week',
         ),
         StackedColumnSeries(
           animationDuration: 700,
           dataSource: stats.entries
-              .where((e) => e.key.startsWith('prev'))
+              .where((e) => e.key.startsWith('prev') == false)
               .toList(growable: false),
-          xValueMapper: (x, _) => (x.key as String).substring(8).toLowerCase(),
+          xValueMapper: (x, _) => (x.key as String),
           yValueMapper: (x, _) {
-            // TODO: refactor
-            final key = (x.key as String).substring(8).toLowerCase();
-            final diff = (stats[key] as int) - (stats[x.key] as int) + 5;
+            final key = x.key as String;
+            final prevKey = key[0].toUpperCase() + key.substring(1);
+            final diff =
+                (stats[key] as int) - (stats['prevWeek$prevKey'] as int);
 
             return diff > 0 ? diff : 0;
           },

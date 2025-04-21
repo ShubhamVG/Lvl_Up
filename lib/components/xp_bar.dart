@@ -40,7 +40,7 @@ class XpBar extends StatelessWidget {
           ),
         ),
         Text(
-          'xyz XP TO LEVEL ${level + 1}',
+          '${100 - (percentage * 100).toInt()} XP TO LEVEL ${level + 1}',
           style: GoogleFonts.robotoFlex(
             fontWeight: FontWeight.w200,
             fontSize: 13.0,
