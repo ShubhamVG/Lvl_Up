@@ -8,7 +8,7 @@ import 'modals.dart';
 /// [Profile] is the class that handles everything related to the user data and
 /// fetches or modifies the user's data using [DbHanlder _db].
 final class Profile {
-  Profile({
+  Profile._({
     required DbHandler db,
     required this.dailyTasks,
     required this.dailyTaskEndTime,
@@ -53,8 +53,8 @@ final class Profile {
 
     final sum = currStats.reduce((x, y) => x + y);
     final avg = sum / currStats.length;
-    final avgRounded10 = avg - (avg ~/ 10);
-    final level = (avgRounded10.toInt() - 30);
+    final avgLeveled = (avg / 10.0).toInt();
+    final level = (avgLeveled - 3) + 1;
 
     return level;
   }
@@ -130,7 +130,7 @@ final class Profile {
       Task.fromJsonMap,
     );
 
-    return Profile(
+    return Profile._(
       db: db,
       dailyTasks: dailyTasks,
       dailyTaskEndTime: dailyTaskEndTime,
@@ -199,7 +199,7 @@ final class Profile {
         taskPool = dailyTaskPool.toList(growable: false)..shuffle();
         tasks = dailyTasks;
         table = DbTable.dailyTasks;
-        time += dTaskTimeSpan;
+        time += dTaskTimeSpanMilliseconds;
         dailyTaskEndTime = time;
         break;
       case TaskType.weekly:
@@ -207,7 +207,7 @@ final class Profile {
         taskPool = weeklyTaskPool.toList(growable: false)..shuffle();
         tasks = weeklyTasks;
         table = DbTable.weeklyTasks;
-        time += wTaskTimeSpan;
+        time += wTaskTimeSpanMilliseconds;
         weeklyTaskEndTime = time;
         break;
       default:
@@ -264,13 +264,6 @@ final class Profile {
     return true;
   }
 
-  Future<void> decreaseStat(final String stat, final int amount) async {
-    // If this errors, then it is intentional
-    stats[stat] = stats[stat]! - amount;
-
-    // TODO: push to dbHandler
-  }
-
   Future<void> deleteFromDailyTaskPool(final int id) async {
     await _db.remove(DbTable.dailyTaskPool, where: 'id = $id');
     dailyTaskPool.removeWhere((e) => e.id == id);
@@ -297,7 +290,9 @@ final class Profile {
     if (currentTimeEpoch > dailyTaskEndTime) {
       final dailyComplete = checkComplete(TaskType.daily);
 
-      if (dailyComplete == false) {
+      if (dailyComplete) {
+        await addReward();
+      } else {
         await addToPendingPunishment();
       }
 
@@ -310,14 +305,16 @@ final class Profile {
 
       await _setTime(
         TaskType.daily,
-        DateTime.now().millisecondsSinceEpoch + dTaskTimeSpan,
+        DateTime.now().millisecondsSinceEpoch + dTaskTimeSpanMilliseconds,
       );
     }
 
     if (currentTimeEpoch > weeklyTaskEndTime) {
       final weeklyComplete = checkComplete(TaskType.weekly);
 
-      if (weeklyComplete == false) {
+      if (weeklyComplete) {
+        await addReward();
+      } else {
         await addToPendingPunishment();
       }
 
@@ -330,9 +327,19 @@ final class Profile {
 
       await _setTime(
         TaskType.weekly,
-        DateTime.now().millisecondsSinceEpoch + wTaskTimeSpan,
+        DateTime.now().millisecondsSinceEpoch + wTaskTimeSpanMilliseconds,
       );
     }
+  }
+
+  Future<void> addReward() async {
+    final random = Random();
+    final randIdx = random.nextInt(rewardPool.length);
+    final randomReward = rewardPool[randIdx];
+    currentRewards.add(randomReward);
+    final data = randomReward.toJsonMap(excludeRows: ['id']);
+
+    await _db.insert(DbTable.currentRewards, data);
   }
 
   Future<void> extendTime(final TaskType taskType, int milliseconds) async {
@@ -362,7 +369,13 @@ final class Profile {
     // If this errors, then it is intentional
     stats[stat] = stats[stat]! + amount;
 
-    // TODO: push to dbHandler
+    for (final stat in stats.entries) {
+      await _db.insert(
+        DbTable.stats,
+        <String, Object>{'name': stat.key, 'value': stat.value},
+        replace: true,
+      );
+    }
   }
 
   Future<void> markPunishmentComplete(final Punishment punishment) async {
@@ -385,6 +398,11 @@ final class Profile {
         final task = dailyTasks[taskIdx].copyWith(isComplete: true);
         dailyTasks.removeAt(taskIdx);
         dailyTasks.insert(taskIdx, task);
+
+        for (final statEntry in task.stats.entries) {
+          await increaseStat(statEntry.key, statEntry.value);
+        }
+
         await _db.update(DbTable.dailyTasks, task);
         return;
       case TaskType.weekly:
@@ -392,6 +410,11 @@ final class Profile {
         final task = weeklyTasks[taskIdx].copyWith(isComplete: true);
         weeklyTasks.removeAt(taskIdx);
         weeklyTasks.insert(taskIdx, task);
+
+        for (final statEntry in task.stats.entries) {
+          await increaseStat(statEntry.key, statEntry.value);
+        }
+
         await _db.update(DbTable.weeklyTasks, task);
         return;
       case TaskType.sideQuests:

@@ -295,7 +295,8 @@ class _RewardCard extends StatelessWidget {
                     // amount of time
                     //
                     // For now, extend by half a day precisely
-                    _extendTime(profile, TaskType.daily, dTaskTimeSpan ~/ 2);
+                    _extendTime(profile, TaskType.daily,
+                        dTaskTimeSpanMilliseconds ~/ 2);
 
                     // close the card and also remove it
                     Navigator.pop(context);
@@ -306,7 +307,8 @@ class _RewardCard extends StatelessWidget {
                     // amount of time
                     //
                     // For now, extend by half a week precisely
-                    _extendTime(profile, TaskType.weekly, wTaskTimeSpan ~/ 2);
+                    _extendTime(profile, TaskType.weekly,
+                        wTaskTimeSpanMilliseconds ~/ 2);
 
                     // close the card and also remove it
                     Navigator.pop(context);
@@ -367,9 +369,7 @@ class _RewardCard extends StatelessWidget {
           },
         );
       },
-      child: Card(
-          color:
-              color), // ====================================================================================
+      child: Card(color: color),
     );
   }
 

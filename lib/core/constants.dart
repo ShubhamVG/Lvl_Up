@@ -1,7 +1,7 @@
 const maxDTasks = 3;
 const maxWTasks = 1;
-const dTaskTimeSpan = 1000 * 60 * 60 * 24;
-const wTaskTimeSpan = dTaskTimeSpan * 7;
+const dTaskTimeSpanMilliseconds = 1000 * 60 * 60 * 24;
+const wTaskTimeSpanMilliseconds = dTaskTimeSpanMilliseconds * 7;
 
 enum PoolType {
   daily('Daily Task'),

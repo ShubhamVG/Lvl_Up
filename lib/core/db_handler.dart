@@ -87,12 +87,17 @@ final class DbHandler {
     final DbTable table,
     JsonMap data, {
     List<String> ignoreRows = const <String>[],
+    bool replace = false,
   }) async {
     for (final String row in ignoreRows) {
       data.remove(row);
     }
 
-    await _db.insert(table.name, data);
+    await _db.insert(
+      table.name,
+      data,
+      conflictAlgorithm: replace ? ConflictAlgorithm.replace : null,
+    );
   }
 
   Future<void> remove(
@@ -183,16 +188,14 @@ final class DbHandler {
     await _createDbTables(_db, dbVersion);
 
     final int millisecondsEpoch = DateTime.now().millisecondsSinceEpoch;
-    const secondsInADay = dTaskTimeSpan;
-    const secondsInAWeek = wTaskTimeSpan;
 
     await insert(
       DbTable.dailyTaskEndTime,
-      {'time': millisecondsEpoch + secondsInADay},
+      {'time': millisecondsEpoch + dTaskTimeSpanMilliseconds},
     );
     await insert(
       DbTable.weeklyTaskEndTime,
-      {'time': millisecondsEpoch + secondsInAWeek},
+      {'time': millisecondsEpoch + wTaskTimeSpanMilliseconds},
     );
 
     const levels = <String, int>{
@@ -206,11 +209,11 @@ final class DbHandler {
     }
 
     const StatsMap stats = {
-      'intelligence': 30,
-      'social': 30,
-      'health': 30,
-      'charisma': 30,
-      'others': 30,
+      'intelligence': 35,
+      'social': 35,
+      'health': 35,
+      'charisma': 35,
+      'others': 35,
       'prevWeekIntelligence': 30,
       'prevWeekSocial': 30,
       'prevWeekHealth': 30,

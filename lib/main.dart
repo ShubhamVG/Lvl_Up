@@ -24,6 +24,9 @@ void main() async {
 
   if (kDebugMode) {
     await db.setToDebugMode();
+    // if (isFirstTime) {
+    //   await prefs.setBool('isFirstTime', false);
+    // }
   } else if (isFirstTime) {
     await prefs.setBool('isFirstTime', false);
     await db.setToDefault();
@@ -33,6 +36,7 @@ void main() async {
 
   try {
     profile = await Profile.fromDb(db);
+    await profile.evaluateTaskCompletion();
   } catch (e) {
     runApp(MaterialApp(
       title: 'Lvl Up',
@@ -84,6 +88,25 @@ class _MyAppState extends State<MyApp> {
 
     return Scaffold(
         drawer: Drawer(child: SettingsScreen(profile)),
+        // floatingActionButton: FloatingActionButton.extended(
+        //   onPressed: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(builder: (context) => const PomodoroScreen()),
+        //     );
+        //   },
+        //   backgroundColor: Colors.white,
+        //   icon: const Icon(
+        //     Icons.timer_outlined,
+        //     size: 28,
+        //     color: Colors.black,
+        //   ),
+        //   label: const Text(
+        //     'Pomodoro',
+        //     style: TextStyle(
+        //         color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+        //   ),
+        // ),
         appBar: AppBar(
           title: Text(
             page.title,
