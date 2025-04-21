@@ -15,8 +15,6 @@ Gamified  Task Management: Complete tasks to gain XP, unlock levels, and maintai
 Real-time Progress Tracking: Visualize your progress with dynamic charts and motivational summaries..​readme.so
 
 
-Note: Replace [Feature 3] and [Feature 4] with actual features of your application.
-
 📸 Screenshots
 <!-- Include screenshots here -->
 <!-- 
@@ -28,7 +26,7 @@ Note: Replace [Feature 3] and [Feature 4] with actual features of your applicati
  
 ## 🛠️ Installation
 
-Prerequisites
+Prerequisites :
 
 Flutter SDK
 
@@ -47,7 +45,6 @@ flutter pub get
 3. Run the application
 flutter run
 
-readme.so
 Ensure you have an emulator running or a device connected.
 
 ## 📁 Project Structure
@@ -76,13 +73,13 @@ Lvl_Up/
 
 
 ## 🤝 Contributors
-ShubhamVG
+[Shubham](https://github.com/ShubhamVG)
 
 
-Anuj
+[Anuj Agarwal](https://github.com/AnujAga2005)
 
 
-Abhinav Kumar Lal
+[Abhinav Kumar Lal](https://github.com/Dev-AKL)
 
 
 
@@ -91,25 +88,26 @@ Abhinav Kumar Lal
 This project is licensed under the MIT License.​
 
 ## 📬 Contact
-For any inquiries or feedback, please reach out to : ​Shubham
-ShubhamVG: shubham@example.com
+For any inquiries or feedback, please reach out to :
+
+ShubhamVG: [vgshubham49@gmail.com](mailto:vgshubham49@gmail.com)
+ 
 
 
-Anuj: anujagarwal1704@gmail.com
+Anuj: [anujagarwal1704@gmail.com](mailto:anujagarwal1704@gmail.com)
+ 
 
 
-LAL: lal@example.com​GitHub Docs
+Abhinav Kumar Lal: [lalabhinav19@gmail.com](mailto:lalabhinav19@gmail.com)
+ 
 
 
-Note: Replace the email addresses with actual contact information.
 
 ## 🌐 Links
-Live Demo
 
+[Live Demo](https://example.com)
 
-Project Documentation​
+[Project Documentation​](https://example.com)
 
-
-Note: Replace the URLs with actual links if available.
 
 
