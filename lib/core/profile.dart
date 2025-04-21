@@ -181,6 +181,12 @@ final class Profile {
     await _db.insert(DbTable.weeklyTaskPool, data);
   }
 
+  Future<void> addSideQuest(final SideQuest quest) async {
+    final data = quest.toJsonMap(excludeRows: ['isComplete']);
+    sideQuests.add(quest);
+    await _db.insert(DbTable.sideQuests, data);
+  }
+
   Future<void> addUniqueTasks(final TaskType taskType, final int amount) async {
     late final List<Task> tasks;
     late final List<Task> taskPool;
@@ -389,11 +395,11 @@ final class Profile {
         await _db.update(DbTable.weeklyTasks, task);
         return;
       case TaskType.sideQuests:
-        final taskIdx = sideQuests.indexWhere((t) => t.id == id);
-        final task = sideQuests[taskIdx].copyWith(isComplete: true);
-        sideQuests.removeAt(taskIdx);
-        sideQuests.insert(taskIdx, task);
-        await _db.update(DbTable.sideQuests, task);
+        sideQuests.removeWhere((e) => e.id == id);
+        await _db.remove(
+          DbTable.sideQuests,
+          where: 'id = $id',
+        );
         return;
     }
   }

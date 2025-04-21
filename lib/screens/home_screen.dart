@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 
 import '../components/task_container.dart';
 import '../core/constants.dart';
+import '../core/modals/side_quests.dart';
 import '../core/profile.dart';
+import '../utils/audio.dart';
 import 'screen.dart';
 
 final class HomeScreen extends Screen {
@@ -16,8 +18,10 @@ final class HomeScreen extends Screen {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  late bool isQuestBeingAdded;
   late int tabIdx;
   late String randomQuote;
+  late final TextEditingController textController;
   late final Profile profile;
   late final ConfettiController confettiController;
   late final TabController tabController;
@@ -25,9 +29,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    isQuestBeingAdded = false;
     randomQuote = _randomMotivationalQuote();
     tabIdx = 0;
     profile = widget.profile;
+    textController = TextEditingController();
     confettiController = ConfettiController(
       duration: const Duration(milliseconds: 200),
     );
@@ -40,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.dispose();
     confettiController.dispose();
     tabController.dispose();
+    textController.dispose();
   }
 
   @override
@@ -134,27 +141,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: Row(
-                        children: [
-                          Text("42°C ", style: TextStyle(color: Colors.white)),
-                          Icon(Icons.sunny, color: Colors.white),
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 0.0),
-                              child: SizedBox(
-                                width: scrnSize.width * 0.7,
-                                child: Text(
-                                  randomQuote,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 5,
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
+                    Center(
+                      child: Text(
+                        randomQuote,
+                        maxLines: 5,
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ],
@@ -190,9 +181,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         TaskContainer(
                           task,
                           onDone: () {
-                            profile.markTaskComplete(TaskType.daily, task);
-                            confettiController.play();
-                            setState(() {});
+                            profile
+                                .markTaskComplete(TaskType.daily, task)
+                                .then((_) {
+                              if (mounted) {
+                                setState(() {});
+                                confettiController.play();
+                                playJingle();
+                              }
+                            });
                           },
                         ),
                       Padding(
@@ -222,8 +219,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         TaskContainer(
                           task,
                           onDone: () {
-                            profile.markTaskComplete(TaskType.weekly, task);
-                            setState(() {});
+                            profile
+                                .markTaskComplete(TaskType.weekly, task)
+                                .then((_) {
+                              if (mounted) {
+                                setState(() {});
+                                confettiController.play();
+                                playJingle();
+                              }
+                            });
                           },
                         ),
                       Padding(
@@ -253,14 +257,65 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         TaskContainer(
                           quest,
                           onDone: () {
-                            profile.markTaskComplete(
-                              TaskType.sideQuests,
-                              quest,
-                            );
-                            confettiController.play();
-                            setState(() {});
+                            profile
+                                .markTaskComplete(TaskType.sideQuests, quest)
+                                .then((_) {
+                              if (mounted) {
+                                setState(() {});
+                                confettiController.play();
+                                playJingle();
+                              }
+                            });
                           },
                         ),
+                      if (isQuestBeingAdded)
+                        Card(
+                          elevation: 5.0,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 10.0,
+                              right: 10.0,
+                              bottom: 5.0,
+                            ),
+                            child: TextField(
+                              controller: textController,
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 10.0),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green.shade100,
+                          elevation: 5.0,
+                        ),
+                        onPressed: () {
+                          if (isQuestBeingAdded) {
+                            final quest = SideQuest(
+                              id: DateTime.now().second,
+                              label: textController.text,
+                            );
+                            profile.addSideQuest(quest).then((_) {
+                              if (mounted) {
+                                setState(() {
+                                  textController.clear();
+                                  isQuestBeingAdded = false;
+                                });
+                              }
+                            });
+                          }
+
+                          setState(() {
+                            isQuestBeingAdded = true;
+                          });
+                        },
+                        child: const Text(
+                          "Add Side Quest",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

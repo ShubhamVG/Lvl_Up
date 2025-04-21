@@ -149,7 +149,7 @@ final class DbHandler {
 
       currentRewards.shuffle();
 
-      for (final reward in currentRewards.sublist(0, 10)) {
+      for (final reward in currentRewards.sublist(0, 5)) {
         final data = reward.toJsonMap();
         await insert(DbTable.currentRewards, data);
       }
@@ -157,9 +157,9 @@ final class DbHandler {
 
     // add side quests
     const sideQuests = <SideQuest>[
-      SideQuest(id: 0, label: 'Random task 1 innit'),
-      SideQuest(id: 1, label: 'Random task 2 innit'),
-      SideQuest(id: 2, label: 'Random task 3 innit'),
+      SideQuest(id: 0, label: 'Talk about a raise with your boss.'),
+      SideQuest(id: 1, label: 'Learn to do a backflip.'),
+      SideQuest(id: 2, label: 'Go to the movies with Meher.'),
     ];
 
     for (final quest in sideQuests) {
@@ -223,20 +223,57 @@ final class DbHandler {
       await insert(DbTable.stats, data);
     }
 
-    // TODO: add meaningful tasks
     const dailyTaskPool = <Task>[
-      Task(id: 0, label: 'abc', stats: {'intelligence': 5}),
-      Task(id: 1, label: 'def', stats: {'social': 2}),
-      Task(id: 2, label: 'ghi', stats: {'others': 1}),
-      Task(id: 3, label: 'jkl', stats: {'health': 3}),
-      Task(id: 4, label: 'mno', stats: {'charisma': 2}),
-      Task(id: 5, label: 'pqr', stats: {'charisma': 1}),
-      Task(id: 6, label: 'stu', stats: {'health': 4}),
-      Task(id: 7, label: 'vwx', stats: {'others': 4}),
-      Task(id: 8, label: 'yz1', stats: {'social': 5}),
-      Task(id: 9, label: '234', stats: {'intelligence': 2}),
-      Task(id: 10, label: '567', stats: {'social': 1}),
-      Task(id: 11, label: '890', stats: {'health': 2}),
+      Task(
+        id: 0,
+        label: 'Read 1 chapter from a book.',
+        stats: {'intelligence': 5},
+      ),
+      Task(
+        id: 1,
+        label: 'Call your grandparents.',
+        stats: {'social': 2},
+      ),
+      Task(
+        id: 2,
+        label: 'Water at least 5 different plants.',
+        stats: {'others': 1},
+      ),
+      Task(
+        id: 3,
+        label: 'Go jogging for 10 minutes.',
+        stats: {'health': 3},
+      ),
+      Task(
+        id: 4,
+        label: 'Crack a joke to your co-worker or friend.',
+        stats: {'charisma': 2},
+      ),
+      Task(
+        id: 6,
+        label: 'Do 30 jumping jacks.',
+        stats: {'health': 4},
+      ),
+      Task(
+        id: 7,
+        label: 'Plant 5 different seeds or saplings.',
+        stats: {'others': 4},
+      ),
+      Task(
+        id: 8,
+        label: 'Volunteer in something new.',
+        stats: {'social': 5},
+      ),
+      Task(
+        id: 9,
+        label: 'Read 2 blogs about any topic you like.',
+        stats: {'intelligence': 2},
+      ),
+      Task(
+        id: 10,
+        label: 'Write a blog about anything.',
+        stats: {'charisma': 2},
+      ),
     ];
 
     for (final task in dailyTaskPool) {
@@ -256,20 +293,38 @@ final class DbHandler {
       );
     }
 
-    // TODO: add meaningful tasks
     const weeklyTaskPool = <Task>[
-      Task(id: 0, label: 'abcd', stats: {'intelligence': 15}),
-      Task(id: 1, label: 'defg', stats: {'social': 12, 'charisma': 5}),
-      Task(id: 2, label: 'ghij', stats: {'others': 11, 'intelligence': 10}),
-      Task(id: 3, label: 'jklm', stats: {'health': 13}),
-      Task(id: 4, label: 'mnop', stats: {'charisma': 12}),
-      Task(id: 5, label: 'pqrs', stats: {'charisma': 11}),
-      Task(id: 6, label: 'stuv', stats: {'health': 14, 'others': 10}),
-      Task(id: 7, label: 'vwxy', stats: {'others': 14}),
-      Task(id: 8, label: 'yz12', stats: {'social': 15}),
-      Task(id: 9, label: '2345', stats: {'intelligence': 12}),
-      Task(id: 10, label: '5678', stats: {'social': 11}),
-      Task(id: 11, label: '890.', stats: {'health': 12, 'social': 5}),
+      Task(
+        id: 0,
+        label: 'Read 5 chapters from a book.',
+        stats: {'intelligence': 15},
+      ),
+      Task(
+        id: 1,
+        label: 'Find & volunteer for a charity or an event.',
+        stats: {'social': 12, 'charisma': 5},
+      ),
+      Task(
+        id: 2,
+        label: 'Teach a kid or a friend about something that fascinates you.',
+        stats: {'charisma': 11, 'intelligence': 10},
+      ),
+      Task(
+        id: 3,
+        label: 'Walk 20000 steps.',
+        stats: {'health': 13},
+      ),
+      Task(
+        id: 4,
+        label: 'Write at least 5 jokes.',
+        stats: {'charisma': 12},
+      ),
+      Task(
+        id: 5,
+        label: 'Calculate your calorie expenditure or '
+            'meal prep for the entire week.',
+        stats: {'health': 14, 'others': 10},
+      ),
     ];
 
     for (final task in weeklyTaskPool) {
@@ -292,78 +347,63 @@ final class DbHandler {
     const rewardPool = <Reward>[
       Reward(
         id: 0,
-        label: 'reward1',
+        label: 'You deserve it! Treat yourself with your favorite meal.',
         rewardType: RewardType.noSideEffect,
       ),
       Reward(
         id: 1,
-        label: 'reward2',
+        label: 'You got an upgrade! Use this to increase any of your stats!',
         rewardType: RewardType.increaseStat,
       ),
       Reward(
         id: 2,
-        label: 'reward3',
+        label: 'Take a break! Skip a daily task.',
         rewardType: RewardType.skipDailyTask,
       ),
       Reward(
         id: 3,
-        label: 'reward4',
+        label: 'Chill and watch any of your favorite movie shows.',
         rewardType: RewardType.noSideEffect,
       ),
       Reward(
         id: 4,
-        label: 'reward5',
-        rewardType: RewardType.skipDailyTask,
+        label: 'You deserve a longer week! Skip your weekly task using this.',
+        rewardType: RewardType.skipWeeklyTask,
       ),
       Reward(
         id: 5,
-        label: 'reward6',
-        rewardType: RewardType.skipDailyTask,
+        label: 'Stonks! Get one of your stats hiked.',
+        rewardType: RewardType.increaseStat,
       ),
       Reward(
         id: 6,
-        label: 'reward7',
-        rewardType: RewardType.increaseStat,
+        label: 'Gimme a new one! Re-roll a daily task.',
+        rewardType: RewardType.rerollDailyTask,
       ),
       Reward(
         id: 7,
-        label: 'reward8',
-        rewardType: RewardType.increaseStat,
-      ),
-      Reward(
-        id: 8,
-        label: 'reward9',
-        rewardType: RewardType.skipDailyTask,
-      ),
-      Reward(
-        id: 9,
-        label: 'reward10',
-        rewardType: RewardType.noSideEffect,
-      ),
-      Reward(
-        id: 10,
-        label: 'reward11',
-        rewardType: RewardType.noSideEffect,
-      ),
-      Reward(
-        id: 11,
-        label: 'reward12',
-        rewardType: RewardType.rerollDailyTask,
-      ),
-      Reward(
-        id: 12,
-        label: 'reward13',
-        rewardType: RewardType.rerollDailyTask,
-      ),
-      Reward(
-        id: 13,
-        label: 'reward14',
+        label: 'Gimme a new one! Re-roll a weekly task.',
         rewardType: RewardType.rerollWeeklyTask,
       ),
       Reward(
-        id: 14,
-        label: 'reward15',
-        rewardType: RewardType.noSideEffect,
+        id: 8,
+        label: 'Jackpot! Skip all your daily tasks.',
+        rewardType: RewardType.skipAllDailyTasks,
+      ),
+      Reward(
+        id: 9,
+        label: "Too good for punishments! Skip a punishment.",
+        rewardType: RewardType.skipPunishment,
+      ),
+      Reward(
+        id: 10,
+        label: "Too good for punishments! Skip EVERY punishment.",
+        rewardType: RewardType.skipPunishment,
+      ),
+      Reward(
+        id: 11,
+        label: "It cannot get any better! Skip all your tasks and chillllll.",
+        rewardType: RewardType.skipEveryTask,
       ),
     ];
 
@@ -373,18 +413,14 @@ final class DbHandler {
     }
 
     const punishmentPool = <Punishment>[
-      Punishment(id: 0, label: 'jump out of the window'),
-      Punishment(id: 1, label: 'jump out of the window again'),
-      Punishment(id: 2, label: 'jump out of the window 3x'),
-      Punishment(id: 3, label: 'jump out of the window 4x'),
-      Punishment(id: 4, label: 'jump out of the window 5x'),
-      Punishment(id: 5, label: 'jump out of the window 6x'),
-      Punishment(id: 6, label: 'jump out of the window 7x'),
-      Punishment(id: 7, label: 'jump out of the window 8x'),
-      Punishment(id: 8, label: 'jump out of the window 9x'),
-      Punishment(id: 9, label: 'jump out of the window 10x'),
-      Punishment(id: 10, label: 'jump out of the window 11x'),
-      Punishment(id: 11, label: 'jump out of the window 12x'),
+      Punishment(id: 0, label: 'Donate something to charity.'),
+      Punishment(id: 1, label: 'Do 30 pushups (you can take breaks).'),
+      Punishment(id: 2, label: 'Only veggies for this week!'),
+      Punishment(id: 3, label: 'Delete social media for 3 days.'),
+      Punishment(
+        id: 4,
+        label: "Change your phone's password to 15+ digits for a week",
+      ),
     ];
 
     for (final punishment in punishmentPool) {

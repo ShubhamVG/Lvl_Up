@@ -45,7 +45,7 @@ void main() async {
 
   runApp(MaterialApp(
     title: 'Lvl Up',
-    debugShowCheckedModeBanner: kDebugMode,
+    debugShowCheckedModeBanner: false, // TODO
     theme: ThemeData(useMaterial3: true),
     home: MyApp(profile),
   ));
@@ -99,10 +99,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                 );
               },
-              icon: Icon(
-                Icons.person_outline_rounded,
-                color: Colors.purple.shade500,
-              ),
+              icon: ClipOval(child: Image.asset('assets/face.jpg')),
             )
           ],
         ),

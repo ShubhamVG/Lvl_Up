@@ -1,5 +1,3 @@
-import 'dart:math'; // TODO: dev dependency only; remove at release
-
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,6 +6,8 @@ import '../components/bullet_list_view.dart';
 import '../core/constants.dart';
 import '../core/modals.dart';
 import '../core/profile.dart';
+import '../utils/audio.dart';
+import '../utils/text.dart';
 import 'screen.dart';
 
 final class InventoryScreen extends Screen {
@@ -55,6 +55,7 @@ final class _InventoryScreenState extends State<InventoryScreen> {
               profile,
               onRewardUse: () => setState(() {}),
             ),
+            const SizedBox(height: 15.0),
             Text(
               'Pending Punishments',
               style: GoogleFonts.monda(
@@ -65,8 +66,9 @@ final class _InventoryScreenState extends State<InventoryScreen> {
             _PendingPunishmentsContainer(
               profile,
               onDone: () {
-                confettiController.play();
                 setState(() {});
+                confettiController.play();
+                playJingle();
               },
             ),
             Center(
@@ -123,12 +125,18 @@ class _ClickedRewardCard extends StatelessWidget {
               child: Text(
                 title,
                 style: GoogleFonts.monda(
-                  fontSize: 30.0,
+                  fontSize: 25.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            Text(description),
+            Text(
+              description,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             SizedBox(
               width: double.infinity,
               child: Padding(
@@ -138,7 +146,13 @@ class _ClickedRewardCard extends StatelessWidget {
                 ),
                 child: OutlinedButton(
                   onPressed: onUse,
-                  child: Text('Use'),
+                  child: Text(
+                    'Use',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -209,7 +223,7 @@ class _RewardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Color(0xFF000000 + Random().nextInt(0x00FFFFFF));
+    final color = _rewardTypeToColor(reward.rewardType);
 
     return GestureDetector(
       onTap: () {
@@ -218,7 +232,7 @@ class _RewardCard extends StatelessWidget {
           context: context,
           builder: (context) {
             return _ClickedRewardCard(
-              title: reward.rewardType.name, // TODO: TBD
+              title: _rewardTypeToTitle(reward.rewardType),
               description: reward.label,
               color: color,
               onUse: () {
@@ -353,13 +367,41 @@ class _RewardCard extends StatelessWidget {
           },
         );
       },
-      child: Card(color: color),
+      child: Card(
+          color:
+              color), // ====================================================================================
     );
+  }
+
+  static String _rewardTypeToTitle(final RewardType rewardType) {
+    if (rewardType == RewardType.noSideEffect) return 'Woohooo';
+    return pascalToNormal(rewardType.name);
+  }
+
+  static Color _rewardTypeToColor(RewardType rewardType) {
+    switch (rewardType) {
+      case RewardType.extendDTaskTime:
+      case RewardType.extendWTaskTime:
+        return Colors.pinkAccent;
+      case RewardType.rerollDailyTask:
+      case RewardType.rerollWeeklyTask:
+        return Colors.orangeAccent;
+      case RewardType.skipAllDailyTasks:
+      case RewardType.skipAllWeeklyTasks:
+      case RewardType.skipAllPunishments:
+      case RewardType.skipEveryTask:
+      case RewardType.skipWeeklyTask:
+      case RewardType.skipDailyTask:
+      case RewardType.skipPunishment:
+        return Colors.greenAccent;
+      default:
+        return Colors.lightGreenAccent;
+    }
   }
 }
 
 // ================== Things to help with the reward thingy ====================
-void _extendTime(
+Future<void> _extendTime(
   final Profile profile,
   final TaskType taskType,
   final int milliseconds,
@@ -367,7 +409,7 @@ void _extendTime(
   await profile.extendTime(taskType, milliseconds);
 }
 
-void _increaseStatWithReward(
+Future<void> _increaseStatWithReward(
   final Reward reward,
   final String statName,
   final int amount,
@@ -377,11 +419,11 @@ void _increaseStatWithReward(
   await profile.increaseStat(statName, amount);
 }
 
-void _removeReward(final Reward reward, final Profile profile) async {
+Future<void> _removeReward(final Reward reward, final Profile profile) async {
   await profile.removeFromCurrentReward(reward);
 }
 
-void _rerollTaskWithReward(
+Future<void> _rerollTaskWithReward(
   final Reward reward,
   final Task task,
   final TaskType taskType,
@@ -392,7 +434,7 @@ void _rerollTaskWithReward(
   await profile.removePendingTask(taskType, task);
 }
 
-void _skipEveryTaskWithReward(
+Future<void> _skipEveryTaskWithReward(
   final Reward reward,
   final Profile profile,
 ) async {
@@ -407,7 +449,7 @@ void _skipEveryTaskWithReward(
   }
 }
 
-void _skipAllPunishmentWithReward(
+Future<void> _skipAllPunishmentWithReward(
   final Reward reward,
   final List<Punishment> punishment,
   final Profile profile,
@@ -419,7 +461,7 @@ void _skipAllPunishmentWithReward(
   }
 }
 
-void _skipTasksWithReward(
+Future<void> _skipTasksWithReward(
   final Reward reward,
   final List<Task> tasks,
   final TaskType taskType,
@@ -675,8 +717,8 @@ class _PendingPunishmentsContainer extends StatelessWidget {
           label: punishment.label,
           isDone: false,
           onDone: () {
-            _markPunishmentAsComplete(profile, punishment);
-            onDone();
+            _markPunishmentAsComplete(profile, punishment)
+                .then((_) => onDone());
           },
         );
       }).toList(growable: false);
@@ -693,7 +735,7 @@ class _PendingPunishmentsContainer extends StatelessWidget {
   }
 }
 
-void _markPunishmentAsComplete(
+Future<void> _markPunishmentAsComplete(
   final Profile profile,
   final Punishment punishment,
 ) async {

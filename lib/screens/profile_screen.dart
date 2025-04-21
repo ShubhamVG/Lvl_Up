@@ -62,7 +62,7 @@ class _Profile extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 40.0,
-          child: Icon(Icons.person_outline, size: 60.0),
+          child: ClipOval(child: Image.asset('assets/face.jpg')),
         ),
         SizedBox(height: 10.0),
         const Text(
