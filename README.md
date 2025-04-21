@@ -1,113 +1,92 @@
-# 🚀 Lvl_Up
-Lvl_Up is a cross-platform mobile application developed as a submission for Envisage's Hack-ur-way 2025 hackathon by Shubham Singh, Anuj Agarwal, and Abhinav Kumar Lal. Built with Flutter, it aims to enhance personal productivity and habit formation through a gamified experience that motivates users to achieve daily goals, build consistent routines, and level up their real-life skills.
-<!-- Replace with an actual image path if available -->
+# 🚀 Lvl Up
+Lvl Up is a cross-platform mobile application developed as a submission for 
+Envisage's Hack-ur-way 2025 hackathon by Shubham Singh, Anuj Agarwal, and 
+Abhinav Kumar Lal. Built with Flutter, it aims to enhance personal 
+productivity and habit formation through a gamified experience that motivates 
+users to achieve daily goals, build consistent routines, and level up their 
+real-life skills.
 
 ## 🧠 Features
 Cross-Platform Compatibility: Seamlessly runs on Android, Windows, and Linux.
 
 
-Modern UI/UX: Intuitive and user-friendly interface designed for optimal user engagement.
+Feature-rich UI: Intuitive and user-friendly interface with thrice as many 
+features than your normal to-do list and other productivity apps.
 
 
-Gamified  Task Management: Complete tasks to gain XP, unlock levels, and maintain daily streaks.
+Gamified Task Management: Complete tasks to gain XP, unlock levels, and 
+maintain daily streaks.
 
 
-Real-time Progress Tracking: Visualize your progress with dynamic charts and motivational summaries..​readme.so
+Real-time Progress Tracking: Visualize your progress with dynamic charts and 
+motivational summaries.
 
 
 📸 Screenshots
-<!-- Include screenshots here -->
-<!-- 
-![Home Screen](assets/screenshots/home.png)  
-![Progress Screen](assets/screenshots/progress.png) 
--->
+![Home Screen](/gh-assets/home.png)  
+![Progress Screen](/gh-assets/profile.png)
 
-> Make sure the `assets/screenshots/` directory contains your screenshots.
- 
 ## 🛠️ Installation
+You can directly download the apk from GitHub release. It should work for 
+most, if not all, android phones and architectures.
 
-Prerequisites :
 
-Flutter SDK
+If the above does not work for some reason, then you can **build from source** 
+as well.
 
-Dart SDK​
-
+## Pre-requisites
+Pick your requirements as stated on the 
+[flutter](https://docs.flutter.dev/get-started/install) website.
 
 ## Steps
-Clone the repository
+1. Clone the repository
 
-git clone https://github.com/ShubhamVG/Lvl_Up.git
-cd Lvl_Up
+```bash
+$ git clone https://github.com/ShubhamVG/Lvl_Up.git
+$ cd Lvl_Up
+```
 
 2. Install dependencies
-flutter pub get
 
-3. Run the application
-flutter run
+```bash
+$ flutter pub get
+```
 
-Ensure you have an emulator running or a device connected.
+3. Building the application on PC
 
-## 📁 Project Structure
+You can either build the app, or choose just to run it. Either choose 
+`flutter run --release` or `flutter build --release` based on which one suits 
+you.
 
-Lvl_Up/
+4. Building the app for android
 
-├── android/            # Android-specific files
-
-├── ios/                # iOS-specific files
-
-├── lib/                # Main Dart codebase
-
-├── assets/             # Images and other assets
-
-├── web/                # Web-specific files
-
-├── windows/            # Windows-specific files
-
-├── macos/              # macOS-specific files
-
-├── linux/              # Linux-specific files
-
-├── pubspec.yaml        # Project metadata and dependencies
-
-└── README.md           # Project documentation
-
+To build for android, run this command:
+```bash
+$ flutter build apk --release
+```
 
 ## 🤝 Contributors
-[Shubham](https://github.com/ShubhamVG)
+[Shubham](https://github.com/ShubhamVG): Ideator & Bug Hunter.
 
 
-[Anuj Agarwal](https://github.com/AnujAga2005)
+[Anuj Agarwal](https://github.com/AnujAga2005): Frontend Programmer & QA.
 
 
-[Abhinav Kumar Lal](https://github.com/Dev-AKL)
+[Abhinav Kumar Lal](https://github.com/Dev-AKL): UI & Logo Designer.
 
-
-
-
-## 📝 License
-This project is licensed under the MIT License.​
 
 ## 📬 Contact
-For any inquiries or feedback, please reach out to :
+For any inquiries or feedback, please reach out to:
 
 ShubhamVG: [vgshubham49@gmail.com](mailto:vgshubham49@gmail.com)
- 
 
 
 Anuj: [anujagarwal1704@gmail.com](mailto:anujagarwal1704@gmail.com)
- 
 
 
 Abhinav Kumar Lal: [lalabhinav19@gmail.com](mailto:lalabhinav19@gmail.com)
- 
-
-
-
 ## 🌐 Links
-
-[Live Demo](https://example.com)
-
-[Project Documentation​](https://example.com)
+[GitHub Release](https://example.com)
 
 
-
+[YouTube Demo](https://example.com)
