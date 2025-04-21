@@ -121,45 +121,43 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     left: 5.0,
                     right: 5.0,
                   ),
-                  child: Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0, top: 10.0),
-                          child: Text(
-                            "Hello there!",
-                            style: TextStyle(fontSize: 13, color: Colors.white),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 10.0),
+                        child: Text(
+                          "Hello there!",
+                          style: TextStyle(fontSize: 13, color: Colors.white),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: Text(
+                          "Tasks completed:",
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.white,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0),
-                          child: Text(
-                            "Tasks completed:",
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.white,
-                            ),
+                      ),
+                      Center(
+                        child: Text(
+                          '$completedTask/$totalTask',
+                          style: TextStyle(
+                            fontSize: 40,
+                            color: Colors.white,
                           ),
                         ),
-                        Center(
-                          child: Text(
-                            '$completedTask/$totalTask',
-                            style: TextStyle(
-                              fontSize: 40,
-                              color: Colors.white,
-                            ),
-                          ),
+                      ),
+                      Center(
+                        child: Text(
+                          randomQuote,
+                          maxLines: 5,
+                          style: TextStyle(color: Colors.white),
                         ),
-                        Center(
-                          child: Text(
-                            randomQuote,
-                            maxLines: 5,
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
