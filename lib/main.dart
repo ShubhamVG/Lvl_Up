@@ -42,7 +42,7 @@ void main() async {
       title: 'Lvl Up',
       debugShowCheckedModeBanner: kDebugMode,
       theme: ThemeData(useMaterial3: true),
-      home: Text(e.toString()),
+      home: Scaffold(body: Text(e.toString())),
     ));
     return;
   }

@@ -272,8 +272,10 @@ class _PoolPageState extends State<_PoolPage> {
                     EditingBulletTile(
                       item: _getNewEmptyItem(widget.poolType),
                       onDone: (item) {
-                        widget.addToPool(item);
-                        setState(() => isAddingNew = false);
+                        widget.addToPool(item).then((_) {
+                          if (!mounted) return;
+                          setState(() => isAddingNew = false);
+                        });
                       },
                       onCancel: () => setState(() => isAddingNew = false),
                     ),

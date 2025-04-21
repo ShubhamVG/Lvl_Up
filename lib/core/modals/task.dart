@@ -71,6 +71,10 @@ class Task implements DbAble {
     statsAsStr = statsAsStr.substring(0, statsAsStr.length - 1);
     statsAsStr += "}";
 
+    if (statsAsStr.length == 1) {
+      statsAsStr = "{}";
+    }
+
     final JsonMap jsonMap = {
       'label': label,
       'statChanges': statsAsStr,
